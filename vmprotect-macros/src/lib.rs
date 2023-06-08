@@ -4,7 +4,7 @@ use twox_hash::xxh3::hash128;
 
 #[proc_macro_attribute]
 pub fn protected(attr: TokenStream, fn_ts: TokenStream) -> TokenStream {
-    println!("{:?}", attr);
+    //println!("{:?}", attr);
     let mut attr = attr.into_iter();
     let prot_type = if let Some(prot_type @ TokenTree::Ident { .. }) = attr.next() {
         prot_type.to_string()
@@ -44,8 +44,10 @@ pub fn protected(attr: TokenStream, fn_ts: TokenStream) -> TokenStream {
         name.push_str("_lock");
     }
     name.push('_');
-
     name.push_str(&format!("{}", hash128(sig.ident.to_string().as_bytes())));
+
+    println!("'{}' -> '{}'", sig.ident.to_string(), name);
+
     let wrapped_ident = syn::Ident::new(&name, sig.ident.span());
     let wrapper = syn::ItemFn {
         attrs: attrs.clone(),
